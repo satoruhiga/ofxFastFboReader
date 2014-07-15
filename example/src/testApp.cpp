@@ -26,10 +26,10 @@ void testApp::setup()
 //--------------------------------------------------------------
 void testApp::update()
 {
+	int c = ofRandom(255);
+	
 	fbo.begin();
-	ofClear(0, 0, 0);
-	ofSetColor(255);
-	ofCircle(ofGetMouseX(), ofGetMouseY(), 100);
+	ofClear(c, c, c);
 	fbo.end();
 	
 	TIME_SAMPLE_START("PBO");	
@@ -45,17 +45,12 @@ void testApp::update()
 		fbo.readToPixels(pix);
 	}
 	TIME_SAMPLE_STOP("readToPixels");
-
-//	image.setFromPixels(pix);
 }
 
 //--------------------------------------------------------------
 void testApp::draw()
 {
-//	image.draw(0, 0);
-	
 	ofDrawBitmapString("press space to change method", 10, 18);
-	TIME_SAMPLE_DRAW(10, 20);
 }
 
 //--------------------------------------------------------------

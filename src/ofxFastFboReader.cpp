@@ -1,12 +1,14 @@
 #include "ofxFastFboReader.h"
 
-ofxFastFboReader::ofxFastFboReader() : pboIds(NULL), async(true), index(0), nextIndex(0), num_bytes(0) {}
+//const int ofxFastFboReader::num_buffers = 2;
+
+ofxFastFboReader::ofxFastFboReader(const int num_buffers) : pboIds(NULL), async(true), index(0), nextIndex(0), num_bytes(0), num_buffers(num_buffers) {}
 
 ofxFastFboReader::~ofxFastFboReader()
 {
 	if (pboIds != NULL)
 	{
-		glDeleteBuffers(2, pboIds);
+		glDeleteBuffers(num_buffers, pboIds);
 		delete [] pboIds;
 		pboIds = NULL;
 	}
@@ -44,8 +46,8 @@ bool ofxFastFboReader::readToPixels(ofFbo &fbo, ofPixelsRef pix, ofImageType typ
 	
 	if (async)
 	{
-		index = (index + 1) % 2;
-		nextIndex = (index + 1) % 2;
+		index = (index + 1) % num_buffers;
+		nextIndex = (index + 1) % num_buffers;
 	}
 	else
 	{
@@ -87,14 +89,14 @@ void ofxFastFboReader::genPBOs()
 {
 	if (!pboIds)
 	{
-		pboIds = new GLuint[2];
-		glGenBuffers(2, pboIds);
+		pboIds = new GLuint[num_buffers];
+		glGenBuffers(num_buffers, pboIds);
 	}
 }
 
 void ofxFastFboReader::setupPBOs(int num_bytes)
 {
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < num_buffers; i++)
 	{
 		glBindBuffer(GL_PIXEL_PACK_BUFFER, pboIds[i]);
 		glBufferData(GL_PIXEL_PACK_BUFFER, num_bytes, NULL, GL_STREAM_READ);
